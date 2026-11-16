@@ -18,6 +18,10 @@
           localStorage.removeItem('theme');
           t = localStorage.getItem('theme-choice') || 'light';
         } catch (e) {}
+        // A page that embeds the simulator can pass its own theme (?theme=dark or ?theme=light).
+        // It wins over a saved choice and is not saved.
+        var q = new URLSearchParams(location.search).get('theme');
+        if (q === 'dark' || q === 'light') t = q;
         document.documentElement.dataset.theme = t === 'dark' ? 'dark' : 'light';
       })();
     </script>

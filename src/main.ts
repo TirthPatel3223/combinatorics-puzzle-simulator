@@ -24,6 +24,12 @@ applyTheme(document.documentElement.dataset.theme === 'dark' ? 'dark' : 'light',
 themeBtn.addEventListener('click', () =>
   applyTheme(document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark', true),
 );
+// A page that embeds the simulator keeps its theme in step by posting
+// { type: 'theme', theme: 'dark' | 'light' }. Only the theme can be set this way, and it is not saved.
+window.addEventListener('message', (e: MessageEvent) => {
+  const d = e.data as { type?: unknown; theme?: unknown } | null;
+  if (d && d.type === 'theme' && (d.theme === 'dark' || d.theme === 'light')) applyTheme(d.theme, false);
+});
 
 const params = new URLSearchParams(location.search);
 const ctx: AppContext = {

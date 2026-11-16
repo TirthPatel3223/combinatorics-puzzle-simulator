@@ -109,6 +109,7 @@ npm run build      # type-check + production build into dist/
 
 URL options:
 - `?puzzle=tangram-cube`, `?puzzle=curvy-copter`, `?puzzle=curvy-copter-plus` or `?puzzle=maltese-gear-cube` opens that tab (no parameter: the Tangram Cube Extreme). Older links (`?variant=original`, `?puzzle=tangram`) still work.
+- `?theme=dark` or `?theme=light` sets the theme without saving it, for embedding. An embedding page can also switch it later by posting `{ type: 'theme', theme: 'dark' }` to the frame.
 - `?s=0.315` overrides the Tangram cut fraction, for calibration.
 - `?round=0` builds the Curvy and Maltese pieces with sharp edges, for comparison.
 
