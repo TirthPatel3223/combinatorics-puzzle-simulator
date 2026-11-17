@@ -16,3 +16,5 @@ fit-out/
 # favicon renderer intermediates (tools/favicons): colour-index renders and previews
 tools/favicons/out/
 tools/favicons/preview/
+# geometry export for the solving pipeline (tools/export): the pipeline keeps its own copy
+tools/export/out/

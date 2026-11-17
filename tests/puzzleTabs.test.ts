@@ -7,7 +7,7 @@ const FAVICONS = import.meta.glob<string>('../public/favicons/*.svg', { query: '
 const from = (query: string) => puzzleFromUrl(new URLSearchParams(query));
 
 describe('puzzle selector', () => {
-  it('lists the five puzzles, the Extreme first', () => {
+  it('lists the six puzzles, the Extreme first', () => {
     expect(PUZZLE_TABS.map((t) => t.label)).toEqual([
       'Tangram Cube Extreme',
       'Tangram Cube',
