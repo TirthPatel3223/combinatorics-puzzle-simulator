@@ -10,7 +10,7 @@ Interactive 3D recreations of real twisty puzzles in the browser (three.js). Pic
 | **Curvy Copter** | Meffert's Curvy Copter (design by Tom van der Zanden) | Curved (conical) cuts, 12 edges turning 180°, jumbling |
 | **Maltese Gear Cube** | Meffert's Maltese Gear Cube (design by Oskar van Deventer) | 90° face turns gear the middle layer 45°: centres and edges trade places, 24 gears spin and tilt |
 
-**Live site:** https://tirthpatel3223.github.io/tangram-cube-extreme/
+**Live site:** https://tirthpatel3223.github.io/combinatorics-puzzle-simulator/
 
 ## Tangram Cube
 
