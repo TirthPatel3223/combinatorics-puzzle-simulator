@@ -29,6 +29,10 @@ import { CENTRE_SLOT_COUNT, RADIAL_SLOTS } from '../../src/maltese/geometry';
 import { PIECES as MALTESE_PIECES } from '../../src/maltese/model';
 import { generateScramble as generateMalteseScramble } from '../../src/maltese/scramble';
 import { MalteseState } from '../../src/maltese/state';
+import { buildCoreMesh as buildDavidCoreMesh, buildDavidVisuals, setPieceTransform as setDavidTransform } from '../../src/david/render/meshes';
+import { buildDavidGeometry, defaultFillet as defaultDavidFillet } from '../../src/david/render/pieces';
+import { generateScramble as generateDavidScramble } from '../../src/david/scramble';
+import { DavidState } from '../../src/david/state';
 
 const OUT = join(__dirname, 'out');
 /** Half-width of the rendered square, in model units (the cube face is [-1, 1]). */
@@ -376,4 +380,19 @@ it('maltese gear cube face', async () => {
     for (const vis of visuals) setMalteseTransform(vis, st.matrix(vis.pieceId));
     return rasterise(root, IDENTITY, size);
   }, 1);
+}, 900_000);
+
+it("david's gear cube face", async () => {
+  const wasm = await loadManifold();
+  const geo = buildDavidGeometry(wasm, defaultDavidFillet());
+  const visuals = buildDavidVisuals(geo);
+  const root = new THREE.Group();
+  for (const vis of visuals) root.add(vis.group);
+  root.add(buildDavidCoreMesh(geo));
+  best('davids-gear-cube', 500, (seed, size) => {
+    const st = DavidState.solved();
+    st.applyAll(generateDavidScramble(mulberry32(seed)));
+    for (const vis of visuals) setDavidTransform(vis, st.matrix(vis.pieceId));
+    return rasterise(root, IDENTITY, size);
+  });
 }, 900_000);

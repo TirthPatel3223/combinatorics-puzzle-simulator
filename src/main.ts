@@ -52,7 +52,9 @@ const boot =
     ? import('./apps/tangram').then((m) => m.start(ctx, puzzle === 'tangram-cube' ? 'original' : 'extreme'))
     : puzzle === 'maltese-gear-cube'
       ? import('./maltese/app').then((m) => m.start(ctx))
-      : import('./curvy/app').then((m) => m.start(ctx, puzzle === 'curvy-copter' ? 'cc' : 'plus'));
+      : puzzle === 'davids-gear-cube'
+        ? import('./david/app').then((m) => m.start(ctx))
+        : import('./curvy/app').then((m) => m.start(ctx, puzzle === 'curvy-copter' ? 'cc' : 'plus'));
 boot.catch((err: unknown) => {
   console.error(err);
   ctx.panelEl.textContent = 'Sorry, the puzzle failed to load. Try reloading the page.';

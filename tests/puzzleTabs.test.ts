@@ -14,6 +14,7 @@ describe('puzzle selector', () => {
       'Curvy Copter Plus',
       'Curvy Copter',
       'Maltese Gear Cube',
+      "David's Gear Cube",
     ]);
     expect(DEFAULT_PUZZLE).toBe('tangram-cube-extreme');
   });

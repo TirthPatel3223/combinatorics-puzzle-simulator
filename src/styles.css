@@ -443,6 +443,10 @@ svg {
   gap: 8px;
 }
 
+.face-grid--4 {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
 .mv--face {
   min-width: 0;
   height: 46px;

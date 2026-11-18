@@ -9,6 +9,7 @@ Interactive 3D recreations of real twisty puzzles in the browser (three.js). Pic
 | **Curvy Copter Plus** | Meffert's Curvy Copter Plus | Split X-pieces: small "inner corner" triangles swap with corners; real bandaging |
 | **Curvy Copter** | Meffert's Curvy Copter (design by Tom van der Zanden) | Curved (conical) cuts, 12 edges turning 180°, jumbling |
 | **Maltese Gear Cube** | Meffert's Maltese Gear Cube (design by Oskar van Deventer) | 90° face turns gear the middle layer 45°: centres and edges trade places, 24 gears spin and tilt |
+| **David's Gear Cube** | Meffert's David's Gear Cube (David Tzur & Oskar van Deventer) | 2×2×2 face turns (`U`, `F`, `L`) plus a 9:12 corner gear turn (`G`) driving all 8 corners 120° and 6 face centres 90° |
 
 **Live site:** https://tirthpatel3223.github.io/combinatorics-puzzle-simulator/
 
@@ -57,6 +58,18 @@ See [`docs/curvy-copter.md`](docs/curvy-copter.md) for the research, the photo f
 
 See [`docs/maltese-gear-cube.md`](docs/maltese-gear-cube.md).
 
+## David's Gear Cube
+
+- **2×2×2 + 9:12 bevel-gear hybrid.**
+  - Eight octants, each holding 1 corner gear (9 teeth around its 3-fold body diagonal), 3 face-centre gear sectors (4 sectors per face form a 12-tooth centre gear), and 3 half-edge posts (pairs of rectangular bar stickers `||` at the midpoints of the 12 cube edges).
+  - Keeping the `DBR` reference corner fixed preserves perspective during scrambles and solves, leaving the three active 90° face turns `U`, `F` and `L`.
+  - The corner gear turn `G` / `G'` (triggered by clicking the opposite control corners `UFL` or `DBR`, or pressing `G`) leaves the 8 octant frames (edge bars) stationary, rotates all 8 corner gears 120° in place, and drives all 6 face-centre gears 90° in the opposite sense.
+- **Geometry from reference photography and spherical bevel-gear kinematics.**
+  - Conical 9-tooth corner gears and 12-tooth centre sectors fitted to a $D_4$-rectified photo of Meffert's David's Gear Cube, with rolling-ball fillets on every outer crease and zero overlap at rest or mid-turn.
+  - Verified against Martywolfman's centre-swapping algorithms `(F G F' G' L2) (G F G' F' L2)` and `(G' F' G F L2) (F' G' F G L2)`.
+
+See [`docs/davids-gear-cube.md`](docs/davids-gear-cube.md).
+
 ## Common controls
 
 - **Free rotation, anywhere over the puzzle area** (everything except the side panel). There are no angle limits; it rolls over in any direction.
@@ -98,6 +111,15 @@ Example: `UL- FR- UF FR+ UL+` jumbles pieces between orbits and returns a flush 
 
 Keys `U D F B L R` turn faces, and `Shift` gives the counterclockwise turn.
 
+**David's Gear Cube.** Active faces `U F L` (the `DBR` reference corner is kept fixed), plus the corner gear turn `G`.
+
+| Move | Meaning |
+|---|---|
+| `U`, `F`, `L` | 90° clockwise turn of that 2×2×2 half-cube (seen from outside the face); order 4. |
+| `G`, `G'` | Corner gear turn (click `UFL` or `DBR` corner): all 8 corners 120° CW/CCW (seen from outside each corner), all 6 face centres 90° CCW/CW (seen from outside each face), edge bars stationary; order 12 (`G3` restores corners, `G4` restores centres). |
+
+Keys `U F L G` trigger moves, and `Shift` gives the `'` turn.
+
 ## Develop
 
 ```bash
@@ -126,7 +148,10 @@ src/curvy/       Curvy Copter engine (cones, pieces, legality, jumble stops, not
 src/maltese/     Maltese Gear Cube engine (slots and frames, exact move tables, state, notation, scramble),
                  photo-fitted star sketch and traced gear outline, render/ (manifold-3d cone-shaped piece
                  solids on a hollow core, rounded edges, animator with gear spin, picking, labels) and ui/
+src/david/       David's Gear Cube engine (8 octants, 24-element CUBE_GROUP poses, U/F/L + G move tables,
+                 state, notation, scramble), fitted 12-tooth centre and 9-tooth corner sketches, render/ and ui/
 tools/maltese/   sticker tools (Python): the star fit to a top-down photo, and the gear traced from a drawing
+tools/david/     sticker fitter and clearance checker (Python) for David's Gear Cube
 tools/favicons/  renders each puzzle's scrambled face from its real meshes and traces it into public/favicons/
 tests/           Vitest suites (tests/curvy/ and tests/maltese/ for those puzzles)
 docs/            research notes and the reusable puzzle-app playbook

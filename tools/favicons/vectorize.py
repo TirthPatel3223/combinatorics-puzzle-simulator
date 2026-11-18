@@ -86,6 +86,7 @@ TITLES = {
     "curvy-copter": "Curvy Copter",
     "curvy-copter-plus": "Curvy Copter Plus",
     "maltese-gear-cube": "Maltese Gear Cube",
+    "davids-gear-cube": "David's Gear Cube",
 }
 
 

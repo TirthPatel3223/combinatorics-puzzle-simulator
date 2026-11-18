@@ -2,7 +2,13 @@
  * The puzzle selector, centred above the 3D view. Each tab is a plain link to `?puzzle=<id>`, so
  * tabs are shareable, open in a new browser tab with a middle-click, and switching reloads a clean app.
  */
-export type PuzzleTabId = 'tangram-cube-extreme' | 'tangram-cube' | 'curvy-copter' | 'curvy-copter-plus' | 'maltese-gear-cube';
+export type PuzzleTabId =
+  | 'tangram-cube-extreme'
+  | 'tangram-cube'
+  | 'curvy-copter'
+  | 'curvy-copter-plus'
+  | 'maltese-gear-cube'
+  | 'davids-gear-cube';
 
 export const PUZZLE_TABS: ReadonlyArray<{ readonly id: PuzzleTabId; readonly label: string }> = [
   { id: 'tangram-cube-extreme', label: 'Tangram Cube Extreme' },
@@ -10,6 +16,7 @@ export const PUZZLE_TABS: ReadonlyArray<{ readonly id: PuzzleTabId; readonly lab
   { id: 'curvy-copter-plus', label: 'Curvy Copter Plus' },
   { id: 'curvy-copter', label: 'Curvy Copter' },
   { id: 'maltese-gear-cube', label: 'Maltese Gear Cube' },
+  { id: 'davids-gear-cube', label: "David's Gear Cube" },
 ];
 
 /** The puzzle the bare site URL opens. */
