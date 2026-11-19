@@ -120,6 +120,19 @@ Keys `U D F B L R` turn faces, and `Shift` gives the counterclockwise turn.
 
 Keys `U F L G` trigger moves, and `Shift` gives the `'` turn.
 
+## Credits
+
+Every puzzle here belongs to its designer and producer. This project rebuilds them from photos and published descriptions so they can be explored in the browser. Please support the creators by buying the real puzzles.
+
+| Puzzle | Designer | Producer |
+|---|---|---|
+| Tangram Cube Extreme, Tangram Cube | Daqing Bao | DaYan |
+| Curvy Copter, Curvy Copter Plus | [Tom van der Zanden](https://www.tomvanderzanden.nl/) (2010) | [Meffert's](https://www.mefferts.com/) |
+| Maltese Gear Cube | [Oskar van Deventer](https://oskarvandeventer.nl/) (2013) | [Meffert's](https://www.mefferts.com/) |
+| David's Gear Cube | Conceived by David Tzur (Alex Polonsky), engineered by [Oskar van Deventer](https://oskarvandeventer.nl/) (2012) | [Meffert's](https://www.mefferts.com/) |
+
+This is an unofficial fan project. It is not affiliated with or endorsed by DaYan, Meffert's or the puzzle designers, and it uses no logos or official artwork. Puzzle names and trademarks belong to their owners.
+
 ## Develop
 
 ```bash

@@ -1,6 +1,7 @@
 import { FACES, type Face } from '../geometry';
 import { type Move, formatMove } from '../notation';
 import type { ShapeReport } from '../state';
+import { DISCLAIMER_HTML, MEFFERTS, OSKAR } from '../../ui/credits';
 
 export type MalteseView = 'corner' | 'face' | 'edge';
 
@@ -60,7 +61,7 @@ function template(): string {
     ).join('');
   return /* html */ `
   <header class="panel__header">
-    <p class="eyebrow eyebrow--brand">${ICON.gear}<span>Meffert's · design by Oskar van Deventer</span></p>
+    <p class="eyebrow eyebrow--brand">${ICON.gear}<span>${MEFFERTS} · design by ${OSKAR}</span></p>
     <h1 class="brand__title">Maltese Gear Cube</h1>
     <p class="brand__meta">2013 design · 60 mm · 50 pieces · 24 gears</p>
   </header>
@@ -126,6 +127,7 @@ function template(): string {
   <footer class="about">Oskar van Deventer's "Maltese Gears" (2013), "a combination of the Geared Mixup and the Void Cube",
     mass-produced by Meffert's. The geometry here is rebuilt from photos of a real puzzle: gear axes 22.5° off the face
     normals, outlines traced from the stickers, edge pieces measured at 11 mm proud in a centre slot.</footer>
+  ${DISCLAIMER_HTML}
 `;
 }
 

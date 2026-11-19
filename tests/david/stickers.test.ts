@@ -73,16 +73,22 @@ describe("David's Gear Cube parametric sticker outlines", () => {
     }
   });
 
+  it('cover the whole piece face: the centre sector reaches the face centre, the corner the vertex', () => {
+    const near = (poly: readonly P2[], q: P2) => Math.min(...poly.map((p) => Math.hypot(p[0] - q[0], p[1] - q[1])));
+    // Within a fillet's reach of the square corner (no circular hub or vertex cutout).
+    expect(near(centre, [0.65 * MM, 0.65 * MM]) / MM).toBeLessThan(0.2);
+    expect(near(corner, [28.5 * MM, 28.5 * MM]) / MM).toBeLessThan(0.2);
+  });
+
   it('centre sector and corner gear stickers are mirror-symmetric about x = y', () => {
     expect(hausdorff(centre, centre.map(([x, y]): P2 => [y, x])) / MM).toBeLessThan(1e-6);
     expect(hausdorff(corner, corner.map(([x, y]): P2 => [y, x])) / MM).toBeLessThan(1e-6);
   });
 
-  it('have smooth tangent fillets everywhere except the two hub/vertex arc endpoints', () => {
+  it('have smooth tangent fillets everywhere (no sharp corners)', () => {
     const tol = ARC_STEP + 1e-6;
-    // The only sharp convex vertices are the two endpoints of the circular hub/vertex cutout arc.
-    expect(turns(centre).filter((t) => Math.abs(t) > tol).length).toBe(2);
-    expect(turns(corner).filter((t) => Math.abs(t) > tol).length).toBe(2);
+    expect(turns(centre).filter((t) => Math.abs(t) > tol).length).toBe(0);
+    expect(turns(corner).filter((t) => Math.abs(t) > tol).length).toBe(0);
     expect(turns(edge).filter((t) => Math.abs(t) > tol).length).toBe(0);
   });
 });

@@ -12,7 +12,7 @@ import {
 } from '../../render/fillet';
 import { scoped } from '../../render/manifold';
 import { DIM, LOOK, MM } from '../config';
-import { CENTRE_MM, CORNER_MM, EDGE_BAR_MM, centreSticker, cornerSticker, edgeBarSticker } from '../stickers';
+import { CORNER_MM, EDGE_BAR_MM, centreSticker, cornerSticker, edgeBarSticker } from '../stickers';
 import { Outline, insideSphere, outsideSphere, planeSurface, radialWall } from './surfaces';
 
 /**
@@ -27,10 +27,10 @@ import { Outline, insideSphere, outsideSphere, planeSurface, radialWall } from '
  * covers the entire depth down to the core.
  *
  *  - Corner (built at UFR): a single cone in the (1, 1, 1) diagonal frame over the union of its three
- *    face plateaus, their bridges across the bevelled edges, and the solid black vertex cap inside the
- *    circular vertex sticker cutout; cut by the three face planes, three bevel planes, and core sphere.
- *  - Centre sector (built at F:UFR): a cone along +z over the 3-tooth quarter-sector plateau (with the
- *    inner black hub quadrant filled in flush with the face plane), cut by z = 1 and the core sphere.
+ *    face plateaus and their bridges across the bevelled edges and the vertex; cut by the three face
+ *    planes, three bevel planes, and core sphere.
+ *  - Centre sector (built at F:UFR): a cone along +z over the 3-tooth quarter-sector plateau (which
+ *    reaches the face centre), cut by z = 1 and the core sphere.
  *  - Half-edge post (built at FR:UFR): a single cone in the (1, 0, 1)/√2 edge-diagonal frame over the
  *    two bar plateaus on F and R and their bridge across the FR bevel; cut by z = 1, x = 1, the FR
  *    bevel plane, and the core sphere.
@@ -242,23 +242,20 @@ const DIAG: Mat3 = (() => {
   return [e1[0], e2[0], d[0], e1[1], e2[1], d[1], e1[2], e2[2], d[2]];
 })();
 
-/** The corner gear's region on its F face (face coordinates on z = 1): plateau, vertex cap and bevel bridges. */
+/** The corner gear's region on its F face (face coordinates on z = 1): plateau and bevel bridges. */
 export function cornerRegions(wasm: ManifoldToplevel, keep: Keep): { sticker: CrossSection; region: CrossSection } {
   const { CrossSection } = wasm;
   const sticker = keep(new CrossSection([cornerSticker() as Vec2[]], 'Positive'));
   const plateau = plateauOf(sticker, keep);
   const ue = CORNER_MM.ue * MM;
   const lo = (CORNER_MM.ue - CORNER_MM.dEtip) * MM - PAD;
-  const vlo = (CORNER_MM.ue - CORNER_MM.rCut) * MM - PAD;
-  // Bridges over the FR and UF bevelled edges (from the edge-tooth tips all the way to the vertex)
-  // plus the solid black vertex cap inside the circular sticker cutout.
+  // Bridges over the FR and UF bevelled edges (from the edge-tooth tips all the way to the vertex).
   const bridgeR = keep(keep(CrossSection.square([1.2 - ue, 1.2 - lo])).translate([ue, lo]));
   const bridgeU = keep(keep(CrossSection.square([1.2 - lo, 1.2 - ue])).translate([lo, ue]));
-  const vertexCap = keep(keep(CrossSection.square([1.2 - vlo, 1.2 - vlo])).translate([vlo, vlo]));
   const edge = 1 + 1e-4;
   const face = keep(keep(CrossSection.square([edge + 0.4, edge + 0.4])).translate([-0.4, -0.4]));
   const close = 0.4 * MM;
-  let region = keep(CrossSection.union([plateau, bridgeR, bridgeU, vertexCap]));
+  let region = keep(CrossSection.union([plateau, bridgeR, bridgeU]));
   region = keep(keep(region.offset(close, 'Round', 2, SEG)).offset(-close, 'Round', 2, SEG));
   region = clean(keep(region.intersect(face)), keep);
   return { sticker, region };
@@ -300,21 +297,13 @@ function buildCorner(wasm: ManifoldToplevel, keep: Keep): Proto {
 
 // ------------------------------------------------------------------------------------------ centre sector
 
-/** The centre sector's plateau on the F face (quadrant 1): sticker grown by PAD plus the solid black inner hub wedge. */
+/** The centre sector's plateau on the F face (quadrant 1): the sticker grown by PAD, clipped to the quadrant. */
 export function centreRegions(wasm: ManifoldToplevel, keep: Keep): { sticker: CrossSection; region: CrossSection } {
   const { CrossSection } = wasm;
   const sticker = keep(new CrossSection([centreSticker() as Vec2[]], 'Positive'));
   const plateau = plateauOf(sticker, keep);
-  const g = GAP;
-  const rHub = (CENTRE_MM.rHub + DIM.paddingMm) * MM;
-  const rCorner = (CENTRE_MM.rCf + DIM.paddingMm) * MM;
-  const box = keep(
-    keep(
-      keep(CrossSection.square([rHub - g - 2 * rCorner, rHub - g - 2 * rCorner])).offset(rCorner, 'Round', 2, SEG),
-    ).translate([g + rCorner, g + rCorner]),
-  );
-  const quad = keep(keep(CrossSection.square([1.2, 1.2])).translate([g, g]));
-  const region = clean(keep(keep(CrossSection.union([plateau, box])).intersect(quad)), keep);
+  const quad = keep(keep(CrossSection.square([1.2, 1.2])).translate([GAP, GAP]));
+  const region = clean(keep(plateau.intersect(quad)), keep);
   return { sticker, region };
 }
 

@@ -1,5 +1,6 @@
 import { MOVE_TOKENS, type Move, type MoveToken, formatMove } from '../notation';
 import type { DavidReport } from '../state';
+import { DISCLAIMER_HTML, MEFFERTS, OSKAR } from '../../ui/credits';
 
 export type DavidView = 'corner' | 'face' | 'edge';
 
@@ -65,7 +66,7 @@ function template(): string {
     ).join('');
   return /* html */ `
   <header class="panel__header">
-    <p class="eyebrow eyebrow--brand">${ICON.gear}<span>Meffert's · David Tzur &amp; Oskar van Deventer</span></p>
+    <p class="eyebrow eyebrow--brand">${ICON.gear}<span>${MEFFERTS} · David Tzur &amp; ${OSKAR}</span></p>
     <h1 class="brand__title">David's Gear Cube</h1>
     <p class="brand__meta">2012 design · 60 mm · 56 pieces · 9:12 gear ratio</p>
   </header>
@@ -131,6 +132,7 @@ function template(): string {
   <footer class="about">Conceived by David Tzur (Alex Polonsky, originally "Polo Gear Cube", 2012) and engineered by Oskar van Deventer,
     mass-produced by Meffert's as "David's Gear Cube". Each 9-tooth corner gear meshes with three 12-tooth face-centre gears (3:4 ratio)
     mounted on a 2×2×2 octant skeleton.</footer>
+  ${DISCLAIMER_HTML}
 `;
 }
 

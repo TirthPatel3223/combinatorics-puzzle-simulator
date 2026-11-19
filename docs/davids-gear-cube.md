@@ -16,7 +16,7 @@ These notes record what the puzzle is, how it moves, how its geometry was fitted
 ## Classification and mechanism
 
 - **2×2×2 + 9:12 bevel-gear hybrid.** The three orthogonal midplanes ($x = 0, y = 0, z = 0$) divide the cube into 8 octants. Every octant has an internal frame (reaching the surface at its 3 half-edge posts with pairs of rectangular bar stickers `||`), 1 corner gear mounted on the octant's body-diagonal axle, and 3 face-centre gear sectors (one on each of the octant's 3 faces).
-- **Gear ratio ($9 : 12 = 3 : 4$).** Each corner gear has **9 teeth** around its 3-fold body-diagonal axis (**3 teeth per face**: 2 full interior teeth + 2 half-teeth shared across the cube edges). On each face, 4 quarter-circle sectors meet around a circular black hub to form a **12-tooth face-centre gear** (**3 teeth per quadrant**, at $15^\circ, 45^\circ, 75^\circ$, so the $0^\circ$ and $90^\circ$ cut lines pass through the valleys between teeth).
+- **Gear ratio ($9 : 12 = 3 : 4$).** Each corner gear has **9 teeth** around its 3-fold body-diagonal axis (**3 teeth per face**: 2 full interior teeth + 2 half-teeth shared across the cube edges). On each face, 4 quarter-circle sectors meet at the face centre to form a **12-tooth face-centre gear** (**3 teeth per quadrant**, at $15^\circ, 45^\circ, 75^\circ$, so the $0^\circ$ and $90^\circ$ cut lines pass through the valleys between teeth).
 - **Shape-preserving.** Rotating a corner gear by $120^\circ$ advances $9 \times \frac{120^\circ}{360^\circ} = 3$ teeth, which drives every meshing face-centre gear by $\frac{3}{12} \times 360^\circ = 90^\circ$ (one quadrant). Because corners have 3-fold symmetry ($120^\circ$) and face centres have 4-fold symmetry ($90^\circ$), all $2\times 2\times 2$ cut planes realign after every gear move and every face move.
 
 ## How it moves
@@ -69,12 +69,12 @@ The White face of a retail Meffert's David's Gear Cube photo was rectified by op
 
 - **Centre gear sector (`CENTRE_MM`):**
   - cut-line offset `dCut = 0.65 mm` ($0.15\text{ mm}$ half-gap $+ 0.50\text{ mm}$ plastic margin);
-  - inner black hub cutout circle `rHub = 7.85 mm`;
+  - no hub cutout: the sticker covers the whole sector down to its inner corner at (`dCut`, `dCut`), rounded with `rCf`;
   - tooth root radius `rRoot = 12.95 mm`, tip radius `rTip = 19.15 mm` (teeth at $15^\circ, 45^\circ, 75^\circ$, straddling the $18.45\text{ mm}$ theoretical pitch radius);
   - tooth half-widths `wBase = 1.05 mm`, `wTip = 1.00 mm`, fillets `rRf = 0.45 mm`, `rTf = 0.75 mm`, `rCf = 0.30 mm`.
 - **Corner gear sticker (`CORNER_MM`):**
   - outer sticker border `ue = 28.50 mm` (plastic bevel starts at `29.00 mm`);
-  - circular vertex cutout radius `rCut = 7.20 mm` centred at $(28.50, 28.50)\text{ mm}$;
+  - no vertex cutout: the sticker covers the whole corner out to $(28.50, 28.50)\text{ mm}$, rounded with `rVtx = 0.45 mm`;
   - diagonal valley distance `dRoot1 = 17.65 mm`, interior tooth angle `phiT = 32.20°`, root/tip distances `dRoot = 17.15 mm`, `dTip = 23.05 mm`, half-widths `wb = 1.38 mm`, `wt = 0.95 mm`;
   - edge half-tooth root/tip distances `dEroot = 15.65 mm`, `dEtip = 19.90 mm`, widths `weBase = 1.72 mm`, `weTip = 1.22 mm`.
 - **Half-edge bar sticker (`EDGE_BAR_MM`):**
@@ -84,8 +84,8 @@ The White face of a retail Meffert's David's Gear Cube photo was rectified by op
 ### Piece solids and clearances (`src/david/render/pieces.ts`, `tests/david/meshes.test.ts`)
 
 Because every move rotates pieces about axes through $(0, 0, 0)$, all three piece prototypes are built as **cones from the cube centre** down to the $27.5\text{ mm}$ black core sphere and rounded with the rolling-ball fillet engine (`0.4 mm` outer radius):
-- **Corner (`buildCorner`):** built in the $(1, 1, 1)$ diagonal frame `DIAG` as a single cone over the union of its 3 face plateaus, their bridges across the 3 bevelled edges, and the solid black vertex cap inside the circular sticker cutout; cut by the 3 face planes and 3 bevel planes.
-- **Centre sector (`buildCentre`):** cone along $+z$ over the 3-tooth sector plateau with the inner black hub quadrant filled flush to the face plane.
+- **Corner (`buildCorner`):** built in the $(1, 1, 1)$ diagonal frame `DIAG` as a single cone over the union of its 3 face plateaus, and their bridges across the 3 bevelled edges and the vertex; cut by the 3 face planes and 3 bevel planes.
+- **Centre sector (`buildCentre`):** cone along $+z$ over the 3-tooth sector plateau, which reaches the face centre.
 - **Half-edge post (`buildEdge`):** built in the $(1, 0, 1)/\sqrt{2}$ edge-diagonal frame `EDGE_DIAG` as a single cone over the `F` and `R` bar plateaus and their bridge across the `FR` bevel; cut by $z = 1, x = 1$ and the `FR` bevel plane.
 - **Clearances:**
   - At rest (solved and scrambled): exact 3D boolean intersections across all 56 pieces and the core sphere have $0.000\text{ mm}^3$ overlap (`< 0.01 mm³` tested in `tests/david/meshes.test.ts`).

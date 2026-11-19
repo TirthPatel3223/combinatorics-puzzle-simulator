@@ -1,6 +1,7 @@
 import { type Axis, type Move, formatMove } from '../puzzle/moves';
 import type { VariantDef, VariantId } from '../puzzle/variants';
 import type { ViewName } from '../render/scene';
+import { DISCLAIMER_HTML } from './credits';
 
 export interface PanelHandlers {
   /** A move button: notation of a single move such as "U" or "D'". */
@@ -118,6 +119,7 @@ const TEMPLATE = /* html */ `
   </section>
 
   <footer class="about" data-ref="about"></footer>
+  ${DISCLAIMER_HTML}
 `;
 
 const ABOUT: Record<VariantId, string> = {

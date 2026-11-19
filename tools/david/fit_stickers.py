@@ -31,7 +31,6 @@ ARC_STEP = math.radians(2.0)
 
 CENTRE_DEFAULT_MM = dict(
     dCut=0.6500,
-    rHub=7.8500,
     rRoot=12.9500,
     rTip=19.1500,
     wBase=1.0500,
@@ -43,7 +42,7 @@ CENTRE_DEFAULT_MM = dict(
 
 CORNER_DEFAULT_MM = dict(
     ue=28.5000,
-    rCut=7.2000,
+    rVtx=0.4500,
     dRoot1=17.6500,
     phiT=32.2000,
     dRoot=17.1500,
@@ -153,7 +152,6 @@ def rot2(p, th):
 
 def centre_sticker(mm_dict=CENTRE_DEFAULT_MM):
     s = {k: v / MM for k, v in mm_dict.items()}
-    x_in = math.sqrt(s['rHub'] ** 2 - s['dCut'] ** 2)
     x_root = math.sqrt(s['rRoot'] ** 2 - s['dCut'] ** 2)
     t15 = math.radians(15.0)
     t45 = math.radians(45.0)
@@ -166,7 +164,6 @@ def centre_sticker(mm_dict=CENTRE_DEFAULT_MM):
     t1_lo = rot2([s['rTip'], -s['wTip']], t45)
 
     half = [
-        {'p': np.array([x_in, s['dCut']])},
         {'p': np.array([x_root, s['dCut']]), 'r': s['rCf']},
         {'p': b0_lo, 'r': s['rRf']},
         {'p': t0_lo, 'r': s['rTf']},
@@ -176,10 +173,8 @@ def centre_sticker(mm_dict=CENTRE_DEFAULT_MM):
         {'p': t1_lo, 'r': s['rTf']},
     ]
     mirrored = [{'p': nd['p'][::-1].copy(), 'r': nd.get('r', 0.0)} for nd in half[::-1]]
-    nodes = half + mirrored
-    nodes[0]['arc'] = np.array([0.0, 0.0])
-    nodes[0]['ccw'] = False
-    return path(nodes)
+    corner = {'p': np.array([s['dCut'], s['dCut']]), 'r': s['rCf']}
+    return path([corner] + half + mirrored)
 
 
 def corner_sticker(mm_dict=CORNER_DEFAULT_MM):
@@ -198,7 +193,6 @@ def corner_sticker(mm_dict=CORNER_DEFAULT_MM):
     e_root = np.array([s['ue'] - s['weBase'], s['ue'] - s['dEroot']])
     e_tip_in = np.array([s['ue'] - s['weTip'], s['ue'] - s['dEtip']])
     e_tip_out = np.array([s['ue'], s['ue'] - s['dEtip']])
-    e_top = np.array([s['ue'], s['ue'] - s['rCut']])
 
     half = [
         {'p': b_in, 'r': s['rRf']},
@@ -208,12 +202,10 @@ def corner_sticker(mm_dict=CORNER_DEFAULT_MM):
         {'p': e_root, 'r': s['rRf']},
         {'p': e_tip_in, 'r': s['rEtf']},
         {'p': e_tip_out, 'r': s['rEof']},
-        {'p': e_top},
     ]
     mirrored = [{'p': nd['p'][::-1].copy(), 'r': nd.get('r', 0.0)} for nd in half[::-1]]
-    mirrored[0]['arc'] = C
-    mirrored[0]['ccw'] = False
-    nodes = [{'p': p_diag, 'r': s['rV1']}] + half + mirrored
+    vertex = {'p': C, 'r': s['rVtx']}
+    nodes = [{'p': p_diag, 'r': s['rV1']}] + half + [vertex] + mirrored
     return path(nodes)
 
 

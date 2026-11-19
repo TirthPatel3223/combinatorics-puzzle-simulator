@@ -13,7 +13,6 @@ import { type P2, type PathNode, SketchError, add2, mul2, path, rot2, sub2 } fro
 // <generated> by tools/david/fit_stickers.py (re-run it to change these numbers)
 export const CENTRE_MM = {
   dCut: 0.6500,
-  rHub: 7.8500,
   rRoot: 12.9500,
   rTip: 19.1500,
   wBase: 1.0500,
@@ -25,7 +24,7 @@ export const CENTRE_MM = {
 
 export const CORNER_MM = {
   ue: 28.5000,
-  rCut: 7.2000,
+  rVtx: 0.4500,
   dRoot1: 17.6500,
   phiT: 32.2000,
   dRoot: 17.1500,
@@ -61,18 +60,16 @@ const U = 1 / 30;
  * Quarter-sector sticker of the 12-tooth face-centre gear on the F face in the UFR quadrant
  * (face coordinates: x right, y up, face centre at the origin), model units, counterclockwise.
  *
- * One half is sketched and mirrored about x = y: the radial cut edge y = dCut, the 15° tooth, and
- * the lower half of the 45° diagonal tooth; mirroring completes the 45° tooth, adds the 75° tooth and
- * the vertical cut edge x = dCut, and closes back to (xIn, dCut) along the inner hub circle of radius
- * rHub around the face centre.
+ * The sticker covers the whole sector out to the teeth: it starts at the filleted corner (dCut, dCut)
+ * next to the face centre, and one half is sketched and mirrored about x = y: the radial cut edge
+ * y = dCut, the 15° tooth, and the lower half of the 45° diagonal tooth; mirroring completes the 45°
+ * tooth, adds the 75° tooth and the vertical cut edge x = dCut back to the starting corner.
  */
 export function centreSticker(mm: typeof CENTRE_MM = CENTRE_MM): P2[] {
   const s = Object.fromEntries(Object.entries(mm).map(([k, v]) => [k, v * U])) as Record<keyof typeof CENTRE_MM, number>;
-  if (s.rHub <= s.dCut * Math.SQRT2 + 0.01) throw new SketchError('rHub too small');
-  if (s.rRoot <= s.rHub + 0.03 || s.rTip <= s.rRoot + 0.05) throw new SketchError('centre radii out of order');
+  if (s.rRoot <= s.dCut * Math.SQRT2 + 0.03 || s.rTip <= s.rRoot + 0.05) throw new SketchError('centre radii out of order');
   if (s.wTip <= s.rTf * 0.8 || s.wBase <= s.wTip - 0.01) throw new SketchError('centre tooth width invalid');
 
-  const xIn = Math.sqrt(s.rHub * s.rHub - s.dCut * s.dCut);
   const xRoot = Math.sqrt(s.rRoot * s.rRoot - s.dCut * s.dCut);
   const t15 = (15 * Math.PI) / 180;
   const t45 = (45 * Math.PI) / 180;
@@ -87,7 +84,6 @@ export function centreSticker(mm: typeof CENTRE_MM = CENTRE_MM): P2[] {
   if (b0Lo[1] <= s.dCut + 0.008) throw new SketchError('15° tooth lower base too close to cut line');
 
   const half: PathNode[] = [
-    { p: [xIn, s.dCut] },
     { p: [xRoot, s.dCut], r: s.rCf },
     { p: b0Lo, r: s.rRf },
     { p: t0Lo, r: s.rTf },
@@ -100,8 +96,7 @@ export function centreSticker(mm: typeof CENTRE_MM = CENTRE_MM): P2[] {
     .slice()
     .reverse()
     .map((nd): PathNode => ({ p: [nd.p[1], nd.p[0]], r: nd.r }));
-  const nodes: PathNode[] = [{ ...half[0], arc: { c: [0, 0], ccw: false } }, ...half.slice(1), ...mirrored];
-  return path(nodes);
+  return path([{ p: [s.dCut, s.dCut], r: s.rCf }, ...half, ...mirrored]);
 }
 
 /**
@@ -112,14 +107,15 @@ export function centreSticker(mm: typeof CENTRE_MM = CENTRE_MM): P2[] {
  * receives the centre gear's 45° tooth, it traces the lower-right interior tooth (pointing towards the
  * centre gear's 30° valley at angle phiT from the right edge), the side valley (which receives the
  * centre gear's 15° tooth), the half-tooth along the right cube edge x = ue, and the straight outer
- * border up to the circular vertex cutout of radius rCut centred at (ue, ue).
+ * border up to the vertex corner (ue, ue), rounded with a fillet of radius rVtx, so the sticker covers
+ * the whole corner of the face.
  */
 export function cornerSticker(mm: typeof CORNER_MM = CORNER_MM): P2[] {
   const s = Object.fromEntries(
     Object.entries(mm).map(([k, v]) => [k, k === 'phiT' ? (v * Math.PI) / 180 : v * U]),
   ) as Record<keyof typeof CORNER_MM, number>;
 
-  if (s.rCut <= 0.05 || s.dRoot <= s.rCut + 0.05 || s.dTip <= s.dRoot + 0.05) {
+  if (s.dRoot <= 0.05 || s.dTip <= s.dRoot + 0.05) {
     throw new SketchError('corner distances out of order');
   }
   if (s.wt <= s.rTf + 1e-4 || s.wb <= s.wt - 0.005) throw new SketchError('corner tooth width invalid');
@@ -139,7 +135,6 @@ export function cornerSticker(mm: typeof CORNER_MM = CORNER_MM): P2[] {
   const eRoot: P2 = [s.ue - s.weBase, s.ue - s.dEroot];
   const eTipIn: P2 = [s.ue - s.weTip, s.ue - s.dEtip];
   const eTipOut: P2 = [s.ue, s.ue - s.dEtip];
-  const eTop: P2 = [s.ue, s.ue - s.rCut];
 
   if (bIn[0] <= bIn[1] + 0.008) throw new SketchError('interior tooth crosses diagonal');
 
@@ -151,17 +146,12 @@ export function cornerSticker(mm: typeof CORNER_MM = CORNER_MM): P2[] {
     { p: eRoot, r: s.rRf },
     { p: eTipIn, r: s.rEtf },
     { p: eTipOut, r: s.rEof },
-    { p: eTop },
   ];
   const mirrored: PathNode[] = half
     .slice()
     .reverse()
-    .map((nd, idx): PathNode =>
-      idx === 0
-        ? { p: [nd.p[1], nd.p[0]], arc: { c: C, ccw: false } }
-        : { p: [nd.p[1], nd.p[0]], r: nd.r },
-    );
-  return path([{ p: pDiag, r: s.rV1 }, ...half, ...mirrored]);
+    .map((nd): PathNode => ({ p: [nd.p[1], nd.p[0]], r: nd.r }));
+  return path([{ p: pDiag, r: s.rV1 }, ...half, { p: C, r: s.rVtx }, ...mirrored]);
 }
 
 /**

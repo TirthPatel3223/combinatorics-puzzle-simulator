@@ -1,6 +1,7 @@
 import { EDGES, type EdgeName } from '../geometry';
 import { type AppliedTurn, formatTurn } from '../notation';
 import type { CurvyVariantDef } from '../variants';
+import { DISCLAIMER_HTML, MEFFERTS, TOM } from '../../ui/credits';
 
 export type TurnMode = 'half' | 'jumble';
 export type CurvyView = 'corner' | 'face' | 'edge';
@@ -72,7 +73,7 @@ function template(v: CurvyVariantDef): string {
   ).join('');
   return /* html */ `
   <header class="panel__header">
-    <p class="eyebrow eyebrow--brand">${ICON.cube}<span>Meffert's · design by Tom van der Zanden</span></p>
+    <p class="eyebrow eyebrow--brand">${ICON.cube}<span>${MEFFERTS} · design by ${TOM}</span></p>
     <h1 class="brand__title">${v.name}</h1>
     <p class="brand__meta">${v.designYear} design · 57 mm · ${v.pieces} pieces · ${v.shapesPerFace} shapes per face</p>
   </header>
@@ -141,6 +142,7 @@ function template(v: CurvyVariantDef): string {
   </section>
 
   <footer class="about">${v.about}</footer>
+  ${DISCLAIMER_HTML}
 `;
 }
 
